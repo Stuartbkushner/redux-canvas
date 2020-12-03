@@ -2,7 +2,8 @@ import {
   Action,
   UPDATE_STROKE,
   BEGIN_STROKE,
-  END_STROKE
+  END_STROKE,
+  SET_STROKE_COLOR
 } from "./actions"
 import { RootState } from "./types"
 
@@ -31,6 +32,15 @@ export const rootReducer = (
         currentStroke: {
           ...state.currentStroke,
           points: [...state.currentStroke.points, action.payload]
+        }
+      }
+    }
+    case SET_STROKE_COLOR: {
+      return {
+        ...state,
+        currentStroke: {
+          ...state.currentStroke,
+          ...{ color: action.payload }
         }
       }
     }
