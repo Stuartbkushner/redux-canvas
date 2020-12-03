@@ -1,13 +1,38 @@
 import React, { useRef } from "react"
-import { useSelector } from "react-redux"
+import { useSelector, useDispatch } from "react-redux"
+import { beginStroke, endStroke, updateStroke } from "./actions"
 import { currentStrokeSelector } from "./selectors"
 
 function App() {
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const currentStroke = useSelector(currentStrokeSelector)
-  const startDrawing = () => { }
-  const endDrawing = () => { }
-  const draw = () => { }
+  const isDrawing = !!currentStroke.points.length
+
+  const dispatch = useDispatch()
+
+  const startDrawing = ({
+    nativeEvent
+  }: React.MouseEvent<HTMLCanvasElement>) => {
+    const { offsetX, offsetY } = nativeEvent
+    dispatch(beginStroke(offsetX, offsetY))
+  }
+
+  const endDrawing = () => {
+    if (isDrawing) {
+      dispatch(endStroke)
+    }
+  }
+
+  const draw = ({
+    nativeEvent
+  }: React.MouseEvent<HTMLCanvasElement>) => {
+    if (!isDrawing) {
+      return
+    }
+    const { offsetX, offsetY } = nativeEvent
+
+    dispatch(updateStroke(offsetX, offsetY))
+   }
 
   return (
     <canvas
