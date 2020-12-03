@@ -20,6 +20,13 @@ canvas {
   margin: 100px 50%;
 }
 
+.edit {
+  position: fixed;
+  bottom: 40px;
+  left: 20%;
+  z-index: 10;
+}
+
 .colors {
   display: flex;
   flex-direction: row;
@@ -36,7 +43,7 @@ canvas {
 
 .colors-panel {
   position: fixed;
-  bottom: 40px;
+  bottom: 15px;
   left: 50%;
   transform: translate3d(-50%, 0, 0);
   z-index: 10;
