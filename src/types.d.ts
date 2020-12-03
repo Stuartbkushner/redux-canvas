@@ -1,6 +1,6 @@
-export type RootState = {
-  currentStroke: Stroke
-  strokes: Stroke[]
+export type Point = {
+  x: number
+  y: number
 }
 
 export type Stroke = {
@@ -8,7 +8,13 @@ export type Stroke = {
   color: string
 }
 
-export type Point = {
-  x: number
-  y: number
+export type Project = {
+  image: string;
+  name: string;
+  id: string
+}
+
+export type RootState = {
+  currentStroke: Stroke
+  strokes: Stroke[]
 }
