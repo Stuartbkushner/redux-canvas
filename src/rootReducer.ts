@@ -1,10 +1,6 @@
 import { RootState } from "./types"
 import { Action, BEGIN_STROKE, UPDATE_STROKE, END_STROKE } from "./actions"
 
-type Action = {
-  type: string
-}
-
 const initialState: RootState = {
   currentStroke: { points: [], color: "#000" },
   strokes: [],
