@@ -1,3 +1,5 @@
+import { ModalState } from "../modules/modalSlice"
+
 export type Point = {
   x: number
   y: number
@@ -18,4 +20,10 @@ export type RootState = {
   currentStroke: Stroke
   strokes: Stroke[]
   historyIndex: number
+  modalVisible: ModalState
+  projectsList: {
+    error: string
+    pending: boolean
+    projects: Project[]
+  }
 }

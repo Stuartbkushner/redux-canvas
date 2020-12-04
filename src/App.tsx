@@ -1,15 +1,24 @@
 import React, { useEffect } from "react"
 import { useDispatch, useSelector } from "react-redux"
-import { beginStroke, endStroke, updateStroke } from "./actions"
-import { RootState } from "./types"
-import { drawStroke, clearCanvas, setCanvasSize } from "./canvasUtils"
 import { EditPanel } from "./shared/EditPanel"
-import { ColorPanel } from "./shared/ColorPanel"
-import { currentStrokeSelector } from "./modules/currentStroke/selectors"
-import { strokesSelector } from "./modules/strokes/selectors"
-import { historyIndexSelector } from "./modules/historyIndex/selectors"
-import { FilePanel } from "./shared/FilePanel"
+import {
+  drawStroke,
+  clearCanvas,
+  setCanvasSize,
+} from "./utils/canvasUtils"
+import {
+  beginStroke,
+  updateStroke,
+} from "./modules/currentStroke/slice"
+import { endStroke } from "./modules/sharedActions"
+import { ModalLayer } from "./ModalLayer"
 import { useCanvas } from "./CanvasContext"
+import { ColorPanel } from "./shared/ColorPanel"
+import { FilePanel } from "./shared/FilePanel"
+import { RootState } from "./utils/types"
+import { historyIndexSelector } from "./modules/historyIndex/selectors"
+import { strokesSelector } from "./modules/strokes/selectors"
+import { currentStrokeSelector } from "./modules/currentStroke/selectors"
 
 const WIDTH = 1024
 const HEIGHT = 768
@@ -17,20 +26,11 @@ const HEIGHT = 768
 function App() {
   const dispatch = useDispatch()
   const canvasRef = useCanvas()
-  const isDrawing = useSelector<RootState>(
-    (state) => !!state.currentStroke.points.length
-  )
-  const historyIndex = useSelector<
-    RootState,
-    RootState["historyIndex"]
-  >(historyIndexSelector)
-  const strokes = useSelector<RootState, RootState["strokes"]>(
-    strokesSelector
-  )
-  const currentStroke = useSelector<
-    RootState,
-    RootState["currentStroke"]
-  >(currentStrokeSelector)
+  const historyIndex = useSelector<RootState, RootState["historyIndex"]>(historyIndexSelector)
+  const strokes = useSelector<RootState, RootState["strokes"]>(strokesSelector)
+  const currentStroke = useSelector<RootState, RootState["currentStroke"]>(currentStrokeSelector)
+  const isDrawing = !!currentStroke.points.length
+
   const getCanvasWithContext = (canvas = canvasRef.current) => {
     return { canvas, context: canvas?.getContext("2d") }
   }
@@ -39,7 +39,7 @@ function App() {
     nativeEvent
   }: React.MouseEvent<HTMLCanvasElement>) => {
     const { offsetX, offsetY } = nativeEvent
-    dispatch(beginStroke(offsetX, offsetY))
+    dispatch(beginStroke({ x: offsetX, y: offsetY }))
   }
 
   useEffect(() => {
@@ -51,23 +51,6 @@ function App() {
       drawStroke(context, currentStroke.points, currentStroke.color)
     )
   }, [currentStroke])
-
-  const endDrawing = () => {
-    if (isDrawing) {
-      dispatch(endStroke(historyIndex, currentStroke))
-    }
-  }
-
-  const draw = ({
-    nativeEvent
-  }: React.MouseEvent<HTMLCanvasElement>) => {
-    if (!isDrawing) {
-      return
-    }
-    const { offsetX, offsetY } = nativeEvent
-
-    dispatch(updateStroke(offsetX, offsetY))
-  }
 
   useEffect(() => {
     const { canvas, context } = getCanvasWithContext()
@@ -83,7 +66,24 @@ function App() {
           drawStroke(context, stroke.points, stroke.color)
         })
     })
-  }, [historyIndex])
+  }, [historyIndex, strokes])
+
+  const endDrawing = () => {
+    if (isDrawing) {
+      dispatch(endStroke({ stroke: currentStroke, historyIndex }))
+    }
+  }
+
+  const draw = ({
+    nativeEvent
+  }: React.MouseEvent<HTMLCanvasElement>) => {
+    if (!isDrawing) {
+      return
+    }
+    const { offsetX, offsetY } = nativeEvent
+
+    dispatch(updateStroke({ x: offsetX, y: offsetY }))
+  }
 
   useEffect(() => {
     const { canvas, context } = getCanvasWithContext()
@@ -106,12 +106,15 @@ function App() {
       <div className="title-bar">
         <div className="title-bar-text">Redux Paint</div>
         <div className="title-bar-controls">
-          <button aria-label="Close" />
+          <button
+            aria-label="Close"
+          />
         </div>
       </div>
+      <ColorPanel/>
       <EditPanel />
-      <ColorPanel />
       <FilePanel />
+      <ModalLayer />
       <canvas
         onMouseDown={startDrawing}
         onMouseUp={endDrawing}
