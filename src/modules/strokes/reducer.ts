@@ -1,5 +1,8 @@
+import {
+  Action,
+  END_STROKE,
+} from "../../actions"
 import { RootState } from "../../types"
-import { Action, END_STROKE } from "./actions"
 
 export const reducer = (
   state: RootState["strokes"] = [],

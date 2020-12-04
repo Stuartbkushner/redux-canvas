@@ -9,5 +9,5 @@ const middleware = [...getDefaultMiddleware(), logger]
 export const store = configureStore({ reducer: combineReducers({
   historyIndex,
   currentStroke,
-  strokes
+  strokes,
 }), middleware })

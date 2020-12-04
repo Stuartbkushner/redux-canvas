@@ -1,9 +1,14 @@
+import {
+  Action,
+  END_STROKE,
+  UNDO,
+  REDO
+} from "../../actions"
 import { RootState } from "../../types"
-import { HistoryIndexAction, UNDO, REDO, END_STROKE } from "./actions"
 
 export const reducer = (
   state: RootState["historyIndex"] = 0,
-  action: HistoryIndexAction
+  action: Action
 ) => {
   switch (action.type) {
     case END_STROKE: {

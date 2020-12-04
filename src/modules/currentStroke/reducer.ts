@@ -1,11 +1,11 @@
+import { RootState } from "../../types"
 import {
   Action,
-  UPDATE_STROKE,
   BEGIN_STROKE,
-  END_STROKE,
+  UPDATE_STROKE,
   SET_STROKE_COLOR,
-} from "./actions"
-import { RootState } from "../../types"
+  END_STROKE
+} from "../../actions"
 
 const initialState: RootState["currentStroke"] = {
   points: [],
